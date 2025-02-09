@@ -1,0 +1,5 @@
+.venv
+
+notebooks/cookies.json
+notebooks/cookies.sqlite
+notebooks/media/*
