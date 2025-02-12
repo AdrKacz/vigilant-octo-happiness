@@ -14,3 +14,7 @@ $ npm run build
 # Lint
 $ npm run lint
 ```
+
+Inspiration for button:
+ - https://ui.aceternity.com/components/tailwindcss-buttons
+ - https://devdojo.com/tailwindcss/buttons#_

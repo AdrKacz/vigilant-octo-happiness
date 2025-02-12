@@ -8,3 +8,8 @@
 .plus1 {
   @apply float-right;
 }
+
+.awesomebutton {
+  @apply shadow-none text-white hover:shadow-none hover:text-white;
+  @apply bg-gradient-to-br from-fuchsia-500 via-violet-600 to-cyan-500;
+}

@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name        My Script
-// @namespace   Violentmonkey Scripts
-// @description This is a userscript.
-// @match       *://*/*
+// @name        LinkedIn
+// @namespace   AdrKacz
+// @description Enhance your LinkedIn.
+// @match       https://*.linkedin.com/search/results/people*
 // @grant       GM_addStyle
 // @version     0.0.0
 // @author      process.env.AUTHOR

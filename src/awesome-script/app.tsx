@@ -1,40 +1,52 @@
-import { createSignal } from 'solid-js';
-import { render } from 'solid-js/web';
-import { getPanel, showToast } from '@violentmonkey/ui';
+import VM from '@violentmonkey/dom';
+import { parseSearchResults } from './parseSearchResults';
+import { cleanUpButtonTemplate, updateButtonTemplate } from './utils';
 // global CSS
 import globalCss from './style.css';
 // CSS modules
-import styles, { stylesheet } from './style.module.css';
+import { stylesheet } from './style.module.css';
+GM_addStyle(globalCss + stylesheet);
 
-function Counter() {
-  const [getCount, setCount] = createSignal(0);
-  const handleAmazing = () => {
-    setCount((count) => count + 1);
-    showToast('Amazing + 1', { theme: 'dark' });
-  };
-  return (
-    <div>
-      <button class={styles.plus1} onClick={handleAmazing}>
-        Amazing+1
-      </button>
-      <p>Drag me</p>
-      <p>
-        <span class={styles.count}>{getCount()}</span> people think this is
-        amazing.
-      </p>
-    </div>
+// Add a button in the filter bar similar to the previous one
+const randomId = Math.random().toString(36).slice(2);
+VM.observe(document.body, () => {
+  // Check the element is not already here
+  if (document.getElementById(randomId)) return;
+
+  // Find the nav bar's second div
+  const nav = document.querySelector('div#search-reusables__filters-bar');
+  if (!nav) return;
+
+  // Get second div within the fist div
+  const div = nav.querySelector('div.display-flex.align-items-center');
+  if (!div) return;
+
+  // Capture the second child of the div
+  const separator = div.querySelector(':first-child');
+  const child = div.querySelector(':nth-child(2)');
+  if (!separator || !child) return;
+  const template = cleanUpButtonTemplate(child);
+
+  // Duplicate the second div before editing it
+  const divClone = div.cloneNode(true);
+  (divClone as HTMLElement).id = randomId;
+  // Remove all children
+  while (divClone.firstChild) {
+    divClone.removeChild(divClone.firstChild);
+  }
+  // Add separator
+  divClone.appendChild(separator.cloneNode(true));
+
+  // Add button from the template, text is 'Export results' and onclick show an alert
+  const exportButton = updateButtonTemplate(
+    template.cloneNode(true),
+    'Export results',
+    () => {
+      if (!parseSearchResults()) VM.observe(document.body, parseSearchResults);
+    },
   );
-}
+  divClone.appendChild(exportButton);
 
-// Let's create a movable panel using @violentmonkey/ui
-const panel = getPanel({
-  theme: 'dark',
-  style: [globalCss, stylesheet].join('\n'),
+  // Append newDiv to the nav
+  nav.appendChild(divClone);
 });
-Object.assign(panel.wrapper.style, {
-  top: '10vh',
-  left: '10vw',
-});
-panel.setMovable(true);
-panel.show();
-render(Counter, panel.body);
